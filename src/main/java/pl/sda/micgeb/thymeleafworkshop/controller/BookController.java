@@ -1,8 +1,10 @@
 package pl.sda.micgeb.thymeleafworkshop.controller;
 
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import pl.sda.micgeb.thymeleafworkshop.model.Book;
 
@@ -11,6 +13,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/book")
+@Slf4j
 public class BookController {
 
     private final List<Book> books;
@@ -27,15 +30,25 @@ public class BookController {
     public String showAllBooks(ModelMap model) {
         model.addAttribute("books", books);
         model.addAttribute("newBook", new Book());
-        model.addAttribute("deleteBook", new Book());
         return "book";
     }
 
-    @PostMapping("/addBook")
+    @PostMapping("/addBook1")
     public String addBook(@Valid @ModelAttribute("newBook") Book book) {
         System.out.println(book);
         books.add(book);
 
+        return "redirect:/book/all";
+    }
+
+    @PostMapping("/addBook")
+    public String addBook(@Valid @ModelAttribute("newBook") Book book, BindingResult result, ModelMap model) {
+        if (result.hasErrors()) {
+//            result.getAllErrors().forEach(er -> log.error(er.toString()));
+            model.addAttribute("books", books);
+            return "book";
+        }
+        books.add(book);
         return "redirect:/book/all";
     }
 
