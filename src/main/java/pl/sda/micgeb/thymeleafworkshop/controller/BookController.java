@@ -41,6 +41,10 @@ public class BookController {
 
     @PostMapping("/removeBook1")
     public String removeBook(@RequestParam("author") String author) {
+        if (author.isBlank()) {
+          throw new IllegalArgumentException("Nie może być puste");
+        }
+
         books.removeIf(book -> book.getAuthor().equals(author));
         return "redirect:/book/all";
     }
